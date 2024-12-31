@@ -1,5 +1,5 @@
 {
-  description = "Packaging of Polmap-PCD.";
+  description = "Packaging of Colmap-PCD.";
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
@@ -9,42 +9,41 @@
   outputs = { self, nixpkgs, systems }: let
     forAllSystems = with nixpkgs.lib; genAttrs systems.systems;
     forAllPkgs = pkgsWith: forAllSystems (system: pkgsWith
+      self.packages.${system}
       (import nixpkgs {
         inherit system;
         config.permittedInsecurePackages = [
-          "freeimage-unstable-2021-11-01"
+          "freeimage-unstable-2024-04-18"
         ];
       })
     );
   in {
-    packages = forAllPkgs (pkgs: rec {
-      default = pkgs.stdenv.mkDerivation {
-        name = "polmap-pcd";
+    packages = forAllPkgs (pkgs': pkgs: {
+      colmap-pcd = pkgs.colmap.overrideAttrs (prev: rec {
+        pname = "colmap-pcd";
+        version = "unstable-2025-01-01";
+        buildInputs = (builtins.filter (pkg: pkg.pname != "freeimage") prev.buildInputs) ++ [
+          pkgs'.freeimage
+          pkgs.bzip2
+          pkgs.llvmPackages.openmp
+          pkgs.lz4
+          pkgs.opencv
+          pkgs.pcl
+        ];
         src = pkgs.fetchFromGitHub {
           owner = "XiaoBaiiiiii";
-          repo = "colmap-pcd";
-          rev = "main";
+          repo = pname;
+          rev = "9cd7d9b7f257306483dc6ecc95d4ef447335888d";
           hash = "sha256-0Y74ni0zQmxuYgtQKJ+SL5kSxEokan0wf1uUWizD3q8=";
         };
-        cmakeFlags = [
-          "-DBOOST_STATIC=false"
-        ];
-        nativeBuildInputs = [ pkgs.cmake ];
-        buildInputs = with pkgs; [
-          boost
-          ceres-solver
-          freeimage
-          glew
-          glfw
-          llvmPackages.openmp
-          lz4
-          opencv
-          pcl
-          qt5.qtbase
-          qt5.wrapQtAppsHook
-          sqlite
-        ];
+        meta.platforms = prev.meta.platforms ++ pkgs.lib.platforms.darwin;
+      });
+
+      freeimage = pkgs.callPackage ./pkgs/freeimage {
+        inherit (pkgs.darwin) autoSignDarwinBinariesHook;
       };
+
+      default = pkgs'.colmap-pcd;
     });
   };
 }
