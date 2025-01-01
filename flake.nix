@@ -17,6 +17,8 @@
         config.permittedInsecurePackages = [
           "freeimage-unstable-2024-04-18"
         ];
+        config.allowUnfree = true;
+        config.cudaSupport = nixpkgs.legacyPackages.${system}.hostPlatform.isLinux;
       })
     );
   in {
@@ -24,7 +26,7 @@
       colmap-pcd = pkgs.colmap.overrideAttrs (prev: rec {
         pname = "colmap-pcd";
         version = "unstable-2025-01-01";
-        buildInputs = (builtins.filter (pkg: pkg.pname != "freeimage") prev.buildInputs) ++ [
+        buildInputs = (builtins.filter (pkg: (pkg.pname or "") != "freeimage") prev.buildInputs) ++ [
           pkgs'.freeimage
           pkgs.bzip2
           pkgs.llvmPackages.openmp
