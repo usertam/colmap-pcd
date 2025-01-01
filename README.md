@@ -12,7 +12,7 @@ nix shell github:usertam/colmap-pcd
 ```
 
 ## With binary cache
-If you are a trusted user, you can simply accept the flake config. Or else, you can do this temporarily with
+Use `sudo` only to elevate you to trusted user in nix.
 ```sh
 sudo nix shell github:usertam/colmap-pcd \
   --extra-substituters 'https://colmap-pcd.cachix.org' \

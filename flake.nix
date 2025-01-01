@@ -4,9 +4,11 @@
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
     systems.url = "github:usertam/nix-systems";
+    colmap-pcd.url = "github:XiaoBaiiiiii/colmap-pcd";
+    colmap-pcd.flake = false;
   };
 
-  outputs = { self, nixpkgs, systems }: let
+  outputs = { self, nixpkgs, systems, colmap-pcd }: let
     forAllSystems = with nixpkgs.lib; genAttrs systems.systems;
     forAllPkgs = pkgsWith: forAllSystems (system: pkgsWith
       self.packages.${system}
@@ -30,12 +32,7 @@
           pkgs.opencv
           pkgs.pcl
         ];
-        src = pkgs.fetchFromGitHub {
-          owner = "XiaoBaiiiiii";
-          repo = pname;
-          rev = "9cd7d9b7f257306483dc6ecc95d4ef447335888d";
-          hash = "sha256-0Y74ni0zQmxuYgtQKJ+SL5kSxEokan0wf1uUWizD3q8=";
-        };
+        src = colmap-pcd;
         meta.platforms = prev.meta.platforms ++ pkgs.lib.platforms.darwin;
       });
 
@@ -43,10 +40,5 @@
 
       default = pkgs'.colmap-pcd;
     });
-  };
-
-  nixConfig = {
-    extra-substituters = [ "https://colmap-pcd.cachix.org" ];
-    extra-trusted-public-keys = [ "colmap-pcd.cachix.org-1:Vjom1FugFkb8cUORejZqkXDYOe4kulPoXrDdE+/l2hA=" ];
   };
 }
