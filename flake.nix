@@ -44,4 +44,9 @@
       default = pkgs'.colmap-pcd;
     });
   };
+
+  nixConfig = {
+    extra-substituters = [ "https://colmap-pcd.cachix.org" ];
+    extra-trusted-public-keys = [ "colmap-pcd.cachix.org-1:Vjom1FugFkb8cUORejZqkXDYOe4kulPoXrDdE+/l2hA=" ];
+  };
 }

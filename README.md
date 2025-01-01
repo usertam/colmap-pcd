@@ -6,9 +6,17 @@ Packaging of the fork [XiaoBaiiiiii/colmap-pcd](https://github.com/XiaoBaiiiiii/
 
 I need to build this for my university final year project. It also helps me procrastinate on the actual project.
 
-## Pop a nix shell
+## Open nix shell from source
 ```sh
 nix shell github:usertam/colmap-pcd
+```
+
+## With binary cache
+If you are a trusted user, you can simply accept the flake config. Or else, you can do this temporarily with
+```sh
+sudo nix shell github:usertam/colmap-pcd \
+  --extra-substituters 'https://colmap-pcd.cachix.org' \
+  --extra-trusted-public-keys 'colmap-pcd.cachix.org-1:Vjom1FugFkb8cUORejZqkXDYOe4kulPoXrDdE+/l2hA='
 ```
 
 ## License
