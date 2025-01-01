@@ -1,0 +1,26 @@
+name: "Build"
+on:
+  workflow_dispatch:
+  push:
+jobs:
+  build:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+      fail-fast: false
+    name: Build
+    runs-on: ${{matrix.os}}
+    steps:
+    - uses: actions/checkout@main
+    - uses: DeterminateSystems/nix-installer-action@main
+    - uses: cachix/cachix-action@master
+      with:
+        name: colmap-pcd
+        authToken: ${{secrets.CACHIX_AUTH_TOKEN}}
+    - name: Build
+      run: |
+        nix build --print-build-logs
+        if ! nix build --rebuild --keep-failed; then
+          diff -ar $(nix eval --raw){,.check}
+          false
+        fi
