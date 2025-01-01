@@ -14,7 +14,6 @@
   jxrlib,
   pkg-config,
   fixDarwinDylibNames,
-  autoSignDarwinBinariesHook,
 }:
 
 stdenv.mkDerivation (finalAttrs: {
@@ -62,17 +61,13 @@ stdenv.mkDerivation (finalAttrs: {
       substituteInPlace Makefile.osx --replace "x86_64" "arm64"
     '';
 
-  nativeBuildInputs =
-    [
-      pkg-config
-    ]
-    ++ lib.optionals stdenv.hostPlatform.isDarwin [
-      cctools
-      fixDarwinDylibNames
-    ]
-    ++ lib.optionals (stdenv.hostPlatform.isDarwin && stdenv.hostPlatform.isAarch64) [
-      autoSignDarwinBinariesHook
-    ];
+  nativeBuildInputs = [
+    pkg-config
+  ] ++ lib.optionals stdenv.hostPlatform.isDarwin [
+    cctools
+    fixDarwinDylibNames
+  ];
+
   buildInputs = [
     libtiff
     libtiff.dev_private

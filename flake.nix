@@ -39,9 +39,7 @@
         meta.platforms = prev.meta.platforms ++ pkgs.lib.platforms.darwin;
       });
 
-      freeimage = pkgs.callPackage ./pkgs/freeimage {
-        inherit (pkgs.darwin) autoSignDarwinBinariesHook;
-      };
+      freeimage = pkgs.callPackage ./pkgs/freeimage { };
 
       default = pkgs'.colmap-pcd;
     });

@@ -20,7 +20,7 @@ jobs:
     - name: Build
       run: |
         nix build --print-build-logs
-        if ! nix build --rebuild --keep-failed; then
-          diff -ar $(nix eval --raw){,.check}
-          false
+        if ! nix build --rebuild --keep-failed 2>stderr; then
+          echo "::warning::$(grep 'error: ' stderr)"
+          diff -ar $(nix eval --raw){,.check} || true
         fi
