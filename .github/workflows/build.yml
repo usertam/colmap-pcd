@@ -13,10 +13,15 @@ jobs:
     steps:
     - uses: actions/checkout@main
     - uses: DeterminateSystems/nix-installer-action@main
+      with:
+        extra-conf: |
+          extra-substituters = https://nix-community.cachix.org https://colmap-pcd.cachix.org
+          extra-trusted-public-keys = nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs= colmap-pcd.cachix.org-1:Vjom1FugFkb8cUORejZqkXDYOe4kulPoXrDdE+/l2hA=
     - uses: cachix/cachix-action@master
       with:
         name: colmap-pcd
         authToken: ${{secrets.CACHIX_AUTH_TOKEN}}
+        skipAddingSubstituter: true
     - name: Build
       run: |
         nix build --print-build-logs
